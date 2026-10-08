@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#ff5c8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nosotros">
+<meta name="description" content="Un espacio privado para dos.">
+<title>Nosotros</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- ══════════ PANTALLA DE ENTRADA ══════════ -->
+<div id="login" class="login oculto">
+  <div class="login-card">
+    <div class="logo-heart">
+      <svg viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
+        <path fill="url(#g1)" d="M12 21s-7.5-4.6-9.5-9C.9 8.3 3 4.5 6.6 4.5c2 0 3.5 1.1 4.4 2.4.4.6.7 1.2 1 1.9.3-.7.6-1.3 1-1.9C13.9 5.6 15.4 4.5 17.4 4.5c3.6 0 5.7 3.8 4.1 7.5-2 4.4-9.5 9-9.5 9z"/>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff8fb3"/><stop offset="1" stop-color="#ff3d77"/>
+        </linearGradient></defs>
+      </svg>
+    </div>
+    <h1>Nosotros</h1>
+    <p class="sub">Un lugar que es solo de ustedes dos.</p>
+
+    <label>Tu nombre</label>
+    <input id="nombre" type="text" maxlength="24" placeholder="Ej: Sofi" autocomplete="given-name" autocapitalize="words">
+
+    <label>Código de pareja <span class="hint">(dejalo vacío para crear uno nuevo)</span></label>
+    <input id="codigo" type="text" maxlength="6" placeholder="Ej: K7QM2P" autocapitalize="characters" spellcheck="false">
+
+    <button id="btn-entrar" class="btn btn-primary">Entrar a nuestro espacio</button>
+
+    <div id="login-error" class="error oculto"></div>
+
+    <div class="login-nota">
+      <strong>¿Cómo funciona?</strong><br>
+      El primero crea el código y se lo manda al otro. Los dos entran con el mismo código
+      y quedan conectados en tiempo real, cada uno desde su celular.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<main id="app" class="app oculto">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="pareja-dot" id="pareja-dot"></div>
+      <div>
+        <div class="pareja-nombres" id="pareja-nombres">…</div>
+        <div class="estado" id="estado">conectando…</div>
+      </div>
+    </div>
+    <button class="icon-btn" id="btn-extrano" title="Te extraño">💗</button>
+    <button class="icon-btn" id="btn-ajustes" title="Ajustes">⚙️</button>
+  </header>
+
+  <!-- CHAT -->
+  <section id="vista-chat" class="vista">
+    <div class="scroll" id="mensajes"></div>
+    <div class="composer">
+      <button class="round" id="btn-foto" title="Foto">📷</button>
+      <input type="file" id="file-foto" accept="image/*" capture="environment" hidden>
+      <button class="round" id="btn-nota" title="Nota de voz">🎙️</button>
+      <div class="composer-input">
+        <textarea id="input-msg" rows="1" placeholder="Escribí algo lindo…" maxlength="4000"></textarea>
+      </div>
+      <button class="round send" id="btn-enviar" title="Enviar">➤</button>
+    </div>
+    <div class="cola-offline oculto" id="cola-offline">
+      <span>📴 Sin conexión — <b id="cola-count">0</b> mensaje(s) esperando para enviarse</span>
+    </div>
+  </section>
+
+  <!-- NOSOTROS -->
+  <section id="vista-nosotros" class="vista oculto">
+    <div class="scroll padded">
+      <div class="card card-pregunta">
+        <div class="card-tag">Pregunta de hoy</div>
+        <div class="pregunta-texto" id="pregunta-texto">…</div>
+        <textarea id="mi-respuesta" rows="3" placeholder="Escribí tu respuesta…"></textarea>
+        <div class="row-end">
+          <button class="btn btn-ghost" id="btn-resp-borrar">Borrar</button>
+          <button class="btn btn-primary sm" id="btn-resp-guardar">Guardar</button>
+        </div>
+        <div id="respuestas" class="respuestas"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-tag">Regalitos</div>
+        <div class="regalos-grid">
+          <button class="regalo" data-emoji="💝" data-tipo="corazon">💝<span>Corazón</span></button>
+          <button class="regalo" data-emoji="🌹" data-tipo="flor">🌹<span>Una flor</span></button>
+          <button class="regalo" data-emoji="🫂" data-tipo="abrazo">🫂<span>Abrazo</span></button>
+          <button class="regalo" data-emoji="💌" data-tipo="carta">💌<span>Cartita</span></button>
+          <button class="regalo" data-emoji="☕" data-tipo="cafe">☕<span>Un café</span></button>
+          <button class="regalo" data-emoji="🍕" data-tipo="pizza">🍕<span>Cena</span></button>
+        </div>
+        <div id="lista-regalos" class="lista-regalos"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIARIO -->
+  <section id="vista-diario" class="vista oculto">
+    <div class="scroll padded">
+      <div class="card">
+        <div class="card-tag">Nuestro diario</div>
+        <textarea id="diario-texto" rows="4" placeholder="Hoy me di cuenta de que…"></textarea>
+        <div class="row-end">
+          <button class="btn btn-primary sm" id="btn-diario">Guardar en el diario</button>
+        </div>
+      </div>
+      <div id="lista-diario"></div>
+    </div>
+  </section>
+
+  <!-- FECHAS -->
+  <section id="vista-fechas" class="vista oculto">
+    <div class="scroll padded">
+      <div class="card">
+        <div class="card-tag">Nuestras fechas</div>
+        <input id="evento-titulo" type="text" maxlength="80" placeholder="Ej: Nuestro aniversario">
+        <input id="evento-fecha" type="date">
+        <label class="check"><input type="checkbox" id="evento-anual" checked> Se repite todos los años</label>
+        <div class="row-end">
+          <button class="btn btn-primary sm" id="btn-evento">Agregar</button>
+        </div>
+      </div>
+      <div id="lista-fechas"></div>
+    </div>
+  </section>
+
+  <nav class="tabbar">
+    <button class="tab activo" data-vista="chat"><span>💬</span>Chat</button>
+    <button class="tab" data-vista="nosotros"><span>💞</span>Nosotros</button>
+    <button class="tab" data-vista="diario"><span>📔</span>Diario</button>
+    <button class="tab" data-vista="fechas"><span>📅</span>Fechas</button>
+  </nav>
+
+  <!-- overlay corazones -->
+  <div id="corazones" class="corazones" aria-hidden="true"></div>
+
+  <!-- modal nota de voz -->
+  <div id="modal-nota" class="modal oculto">
+    <div class="modal-card">
+      <h3>Nota de voz</h3>
+      <div class="nota-timer" id="nota-timer">0:00</div>
+      <div class="nota-wave" id="nota-wave"></div>
+      <div class="row-center">
+        <button class="btn btn-primary" id="nota-grabar">● Grabar</button>
+        <button class="btn btn-ghost oculto" id="nota-parar">■ Parar</button>
+        <button class="btn btn-ghost oculto" id="nota-enviar">➤ Enviar</button>
+      </div>
+      <audio id="nota-preview" controls class="oculto"></audio>
+      <button class="btn btn-ghost cerrar" id="nota-cancelar">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- modal ajustes -->
+  <div id="modal-ajustes" class="modal oculto">
+    <div class="modal-card">
+      <h3>Ajustes</h3>
+      <div class="ajuste">
+        <div class="card-tag">Tu código de pareja</div>
+        <div class="codigo-grande" id="codigo-grande">—</div>
+        <button class="btn btn-ghost sm" id="btn-copiar-codigo">Copiar código</button>
+        <button class="btn btn-ghost sm" id="btn-instalar">📲 Instalar la app</button>
+      </div>
+      <div class="ajuste">
+        <div class="card-tag">Datos</div>
+        <p class="muted">Los mensajes se guardan en el servidor de la app. Si querés que borre todo, salí y decime.</p>
+        <button class="btn btn-danger sm" id="btn-salir">Salir</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast" class="toast oculto"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>
